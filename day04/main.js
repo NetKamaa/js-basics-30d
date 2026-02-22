@@ -1,8 +1,6 @@
 let state = {
-  items: [
-    { id: 1, text: "123" },
-    { id: 2, text: "321" },
-  ],
+  items: [],
+  filter: "",
 };
 
 function createItem(text) {
@@ -21,12 +19,14 @@ function addItem(prevState, text) {
   }
   const newItem = createItem(text);
   return {
+    ...prevState,
     items: [...prevState.items, newItem],
   };
 }
 
 function removeItem(prevState, idToRemove) {
   return {
+    ...prevState,
     items: prevState.items.filter((item) => item.id !== idToRemove),
   };
 }
@@ -43,11 +43,16 @@ const itemInput = document.querySelector("#item-input");
 const btnAdd = document.querySelector("#btnAdd");
 const itemsList = document.querySelector("#items-list");
 const preview = document.querySelector("#preview");
+const filterInput = document.querySelector("#filter-input");
 
 function render() {
   itemsList.innerHTML = "";
 
-  state.items.forEach((item) => {
+  const visibleItems = state.items.filter((item) =>
+    item.text.toLowerCase().includes(state.filter.toLowerCase()),
+  );
+
+  visibleItems.forEach((item) => {
     const li = document.createElement("li");
     li.textContent = item.text;
 
@@ -63,7 +68,7 @@ function render() {
     itemsList.appendChild(li);
   });
 
-  preview.textContent = formatItems(state.items);
+  preview.textContent = formatItems(visibleItems);
 }
 
 btnAdd.addEventListener("click", () => {
@@ -72,4 +77,10 @@ btnAdd.addEventListener("click", () => {
   itemInput.value = "";
   render();
 });
+
+filterInput.addEventListener("input", () => {
+  state.filter = filterInput.value.trim();
+  render();
+});
+
 render();
