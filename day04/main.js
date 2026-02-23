@@ -17,7 +17,7 @@ function addItem(prevState, text) {
   if (trimmed.length === 0) {
     return prevState;
   }
-  const newItem = createItem(text);
+  const newItem = createItem(trimmed);
   return {
     ...prevState,
     items: [...prevState.items, newItem],
@@ -44,6 +44,8 @@ const btnAdd = document.querySelector("#btnAdd");
 const itemsList = document.querySelector("#items-list");
 const preview = document.querySelector("#preview");
 const filterInput = document.querySelector("#filter-input");
+const totalCount = document.querySelector("#total-count");
+const visibleCount = document.querySelector("#visible-count");
 
 function render() {
   itemsList.innerHTML = "";
@@ -51,6 +53,11 @@ function render() {
   const visibleItems = state.items.filter((item) =>
     item.text.toLowerCase().includes(state.filter.toLowerCase()),
   );
+
+  const stats = {
+    total: state.items.length,
+    visible: visibleItems.length,
+  };
 
   visibleItems.forEach((item) => {
     const li = document.createElement("li");
@@ -69,6 +76,8 @@ function render() {
   });
 
   preview.textContent = formatItems(visibleItems);
+  totalCount.textContent = stats.total;
+  visibleCount.textContent = stats.visible;
 }
 
 btnAdd.addEventListener("click", () => {
