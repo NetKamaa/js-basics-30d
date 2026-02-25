@@ -13,23 +13,55 @@ export const errorBlock = document.createElement("p");
 errorBlock.style.color = "red";
 itemInput.parentNode.insertBefore(errorBlock, itemInput.nextSibling);
 
+let lastListHTML = "";
+
+function renderEmptyState(type) {
+  if (type === "empty") {
+    return `<li class="empty">Список пуст</li>`;
+  }
+
+  if (type === "no-results") {
+    return `<li class="empty">Ничего не найдено</li>`;
+  }
+
+  return "";
+}
+
 export function render() {
   const { items, filter } = state;
 
   const visibleItems = getVisibleItems(items, filter);
   const stats = getStats(items, visibleItems);
-  const html = visibleItems
-    .map(
-      (item) => `
+
+  let viewState = "normal";
+
+  if (items.length === 0) {
+    viewState = "empty";
+  } else if (visibleItems.length === 0) {
+    viewState = "no-results";
+  }
+
+  let html = "";
+
+  if (viewState === "normal") {
+    html = visibleItems
+      .map(
+        (item) => `
       <li data-id="${item.id}">
         <span>${item.text}</span>
         <button data-role="delete">Delete</button>
       </li>
     `,
-    )
-    .join("");
+      )
+      .join("");
+  } else {
+    html = renderEmptyState(viewState);
+  }
 
-  itemsList.innerHTML = html;
+  if (html !== lastListHTML) {
+    itemsList.innerHTML = html;
+    lastListHTML = html;
+  }
 
   preview.textContent = formatItems(visibleItems);
   totalCount.textContent = stats.total;

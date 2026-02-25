@@ -18,5 +18,6 @@ function deriveStats(items, visibleItems) {
 function deriveUIState(items, visibleItems) {
   return {
     isEmptyAll: items.length === 0,
+    isEmptyVisible: items.length > 0 && visibleItems.length === 0,
   };
 }
