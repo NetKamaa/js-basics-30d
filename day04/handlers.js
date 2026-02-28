@@ -6,7 +6,14 @@ import {
   itemsList,
   render,
 } from "./render.js";
-import { addItem, removeItem, setFilter, setState, state } from "./state.js";
+import {
+  addItem,
+  removeItem,
+  saveState,
+  setFilter,
+  setState,
+  state,
+} from "./state.js";
 import { getValidationError } from "./utils.js";
 
 function handleAdd() {
@@ -14,10 +21,16 @@ function handleAdd() {
   const error = getValidationError(text);
 
   errorBlock.textContent = error;
+
   if (error) return;
 
+  const prevState = state;
   const nextState = addItem(state, text);
+
+  if (nextState === state) return;
+
   setState(nextState);
+  saveState();
 
   itemInput.value = "";
   render();
@@ -26,6 +39,7 @@ function handleAdd() {
 function handleFilterChange() {
   const nextState = setFilter(state, filterInput.value);
   setState(nextState);
+  saveState();
   render();
 }
 
@@ -39,6 +53,7 @@ function handleListClick(event) {
   const id = Number(li.dataset.id);
   const nextState = removeItem(state, id);
   setState(nextState);
+  saveState();
   render();
 }
 
