@@ -1,19 +1,20 @@
 import {
+  addItemAction,
+  getState,
+  removeItemAction,
+  saveState,
+  setFilterAction,
+} from "./state.js";
+
+import {
   btnAdd,
   errorBlock,
   filterInput,
   itemInput,
   itemsList,
-  render,
 } from "./render.js";
-import {
-  addItem,
-  removeItem,
-  saveState,
-  setFilter,
-  setState,
-  state,
-} from "./state.js";
+
+import { render } from "./render.js";
 import { getValidationError } from "./utils.js";
 
 function handleAdd() {
@@ -23,65 +24,50 @@ function handleAdd() {
   errorBlock.textContent = error;
 
   if (error) {
-    render();
+    render(getState());
     return;
   }
 
-  const prevState = state;
-  const nextState = addItem(state, text);
-
-  if (nextState === state) return;
-
-  setState(nextState);
+  addItemAction(text);
   saveState();
 
   itemInput.value = "";
   errorBlock.textContent = "";
 
-  render();
+  render(getState());
 }
 
 function handleFilterChange() {
-  const prevState = state;
-  const nextState = setFilter(state, filterInput.value);
-  if (nextState === prevState) return;
-  setState(nextState);
+  setFilterAction(filterInput.value);
   saveState();
-  render();
+  render(getState());
 }
 
 function handleListClick(event) {
   const btn = event.target;
+
   if (btn.dataset.role !== "delete") return;
 
   const li = btn.closest("li");
   if (!li) return;
 
   const id = Number(li.dataset.id);
-
   if (!Number.isFinite(id)) return;
 
-  const prevState = state;
-  const nextState = removeItem(state, id);
-
-  if (nextState === prevState) return;
-
-  setState(nextState);
+  removeItemAction(id);
   saveState();
-  render();
+  render(getState());
 }
 
 export function initHandlers() {
   btnAdd.addEventListener("click", handleAdd);
 
   itemInput.addEventListener("keydown", (event) => {
-    if (event.key === "Enter") {
-      handleAdd();
-    }
+    if (event.key === "Enter") handleAdd();
   });
 
   itemInput.addEventListener("input", () => {
-    render();
+    render(getState());
   });
 
   filterInput.addEventListener("input", handleFilterChange);

@@ -1,6 +1,6 @@
 import { normalizeText } from "./utils.js";
 
-export let state = {
+let state = {
   items: [],
   filter: "",
 };
@@ -11,6 +11,10 @@ const DEFAULT_STATE = {
 };
 
 const STORAGE_KEY = "todo_app_state";
+
+export function getState() {
+  return state;
+}
 
 export function setState(nextState) {
   state = nextState;
@@ -97,4 +101,22 @@ export function setFilter(prevState, query) {
     ...prevState,
     filter: normalized,
   };
+}
+
+export function addItemAction(text) {
+  const nextState = addItem(state, text);
+  if (nextState !== state) state = nextState;
+  return state;
+}
+
+export function removeItemAction(id) {
+  const nextState = removeItem(state, id);
+  if (nextState !== state) state = nextState;
+  return state;
+}
+
+export function setFilterAction(query) {
+  const nextState = setFilter(state, query);
+  if (nextState !== state) state = nextState;
+  return state;
 }

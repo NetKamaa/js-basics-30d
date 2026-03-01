@@ -1,4 +1,3 @@
-import { state } from "./state.js";
 import {
   deriveFlags,
   formatItems,
@@ -32,8 +31,8 @@ function renderEmptyState(type) {
   return "";
 }
 
-export function render() {
-  const { items, filter } = state;
+export function render(currentState) {
+  const { items, filter } = currentState;
 
   const visibleItems = getVisibleItems(items, filter);
   const stats = getStats(items, visibleItems);
@@ -68,13 +67,12 @@ export function render() {
     lastListHTML = html;
   }
 
-  const flags = deriveFlags(state, {
+  const flags = deriveFlags(currentState, {
     inputValue: itemInput.value,
     error: errorBlock.textContent,
   });
 
   btnAdd.disabled = !flags.canAddItem;
-
   errorBlock.style.display = flags.hasError ? "block" : "none";
 
   preview.textContent = formatItems(visibleItems);
