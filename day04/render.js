@@ -1,5 +1,10 @@
 import { state } from "./state.js";
-import { formatItems, getStats, getVisibleItems } from "./utils.js";
+import {
+  deriveFlags,
+  formatItems,
+  getStats,
+  getVisibleItems,
+} from "./utils.js";
 
 export const itemInput = document.querySelector("#item-input");
 export const btnAdd = document.querySelector("#btnAdd");
@@ -62,6 +67,15 @@ export function render() {
     itemsList.innerHTML = html;
     lastListHTML = html;
   }
+
+  const flags = deriveFlags(state, {
+    inputValue: itemInput.value,
+    error: errorBlock.textContent,
+  });
+
+  btnAdd.disabled = !flags.canAddItem;
+
+  errorBlock.style.display = flags.hasError ? "block" : "none";
 
   preview.textContent = formatItems(visibleItems);
   totalCount.textContent = stats.total;

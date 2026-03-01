@@ -80,6 +80,8 @@ export function addItem(prevState, text) {
 }
 
 export function removeItem(prevState, idToRemove) {
+  const hasItem = prevState.items.some((item) => item.id === idToRemove);
+  if (!hasItem) return prevState;
   return {
     ...prevState,
     items: prevState.items.filter((item) => item.id !== idToRemove),
@@ -87,8 +89,12 @@ export function removeItem(prevState, idToRemove) {
 }
 
 export function setFilter(prevState, query) {
+  const normalized = normalizeText(String(query ?? ""));
+
+  if (normalized === prevState.filter) return prevState;
+
   return {
     ...prevState,
-    filter: normalizeText(query),
+    filter: normalized,
   };
 }

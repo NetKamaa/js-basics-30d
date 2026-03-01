@@ -30,3 +30,18 @@ export function getStats(items, visibleItems) {
     visible: visibleItems.length,
   };
 }
+
+export function deriveFlags(state, { inputValue, error }) {
+  const normalizedInput = inputValue.trim();
+
+  const hasError = Boolean(error);
+  const hasItems = state.items.length > 0;
+
+  const canAddItem = normalizedInput.length > 0 && !hasError;
+
+  return {
+    hasError,
+    hasItems,
+    canAddItem,
+  };
+}

@@ -22,7 +22,10 @@ function handleAdd() {
 
   errorBlock.textContent = error;
 
-  if (error) return;
+  if (error) {
+    render();
+    return;
+  }
 
   const prevState = state;
   const nextState = addItem(state, text);
@@ -33,11 +36,15 @@ function handleAdd() {
   saveState();
 
   itemInput.value = "";
+  errorBlock.textContent = "";
+
   render();
 }
 
 function handleFilterChange() {
+  const prevState = state;
   const nextState = setFilter(state, filterInput.value);
+  if (nextState === prevState) return;
   setState(nextState);
   saveState();
   render();
@@ -51,7 +58,14 @@ function handleListClick(event) {
   if (!li) return;
 
   const id = Number(li.dataset.id);
+
+  if (!Number.isFinite(id)) return;
+
+  const prevState = state;
   const nextState = removeItem(state, id);
+
+  if (nextState === prevState) return;
+
   setState(nextState);
   saveState();
   render();
@@ -64,6 +78,10 @@ export function initHandlers() {
     if (event.key === "Enter") {
       handleAdd();
     }
+  });
+
+  itemInput.addEventListener("input", () => {
+    render();
   });
 
   filterInput.addEventListener("input", handleFilterChange);
