@@ -11,7 +11,7 @@ export function formatItems(items) {
 }
 
 export function getValidationError(text) {
-  const trimmed = text.trim();
+  const trimmed = normalizeText(text);
   if (trimmed.length === 0) return "Введите текст";
   if (trimmed.length > 60)
     return "Слишком длинный текст, длина не должна превышать 60 символов";

@@ -31,7 +31,18 @@ function renderEmptyState(type) {
   return "";
 }
 
-export function render(currentState) {
+export function render(currentState, uiState = {}) {
+  const { isLoading = false, loadError = "" } = uiState;
+
+  if (isLoading) {
+    itemsList.innerHTML = `<li class="empty">Загрузка...</li>`;
+    return;
+  }
+  if (loadError) {
+    itemsList.innerHTML = `<li class="empty">${loadError}</li>`;
+    return;
+  }
+
   const { items, filter } = currentState;
 
   const visibleItems = getVisibleItems(items, filter);
