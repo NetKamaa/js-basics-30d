@@ -1,6 +1,7 @@
 import {
   deriveFlags,
   formatItems,
+  getListMode,
   getStats,
   getVisibleItems,
 } from "./utils.js";
@@ -31,51 +32,34 @@ function renderEmptyState(type) {
   return "";
 }
 
-export function render(currentState, uiState = {}) {
-  const { isLoading = false, loadError = "" } = uiState;
-
-  if (isLoading) {
-    itemsList.innerHTML = `<li class="empty">Загрузка...</li>`;
-    return;
-  }
-  if (loadError) {
-    itemsList.innerHTML = `<li class="empty">${loadError}</li>`;
-    return;
-  }
-
+export function render(currentState) {
   const { items, filter } = currentState;
 
   const visibleItems = getVisibleItems(items, filter);
   const stats = getStats(items, visibleItems);
 
-  let viewState = "normal";
+  const mode = getListMode(currentState, visibleItems);
 
-  if (items.length === 0) {
-    viewState = "empty";
-  } else if (visibleItems.length === 0) {
-    viewState = "no-results";
-  }
+  switch (mode) {
+    case "loading":
+      renderLoading();
+      break;
 
-  let html = "";
+    case "error":
+      renderError(currentState.requestError);
+      break;
 
-  if (viewState === "normal") {
-    html = visibleItems
-      .map(
-        (item) => `
-      <li data-id="${item.id}">
-        <span>${item.text}</span>
-        <button data-role="delete">Delete</button>
-      </li>
-    `,
-      )
-      .join("");
-  } else {
-    html = renderEmptyState(viewState);
-  }
+    case "emptyAll":
+      renderEmptyAll();
+      break;
 
-  if (html !== lastListHTML) {
-    itemsList.innerHTML = html;
-    lastListHTML = html;
+    case "emptyFiltered":
+      renderEmptyFiltered();
+      break;
+
+    case "normal":
+      renderList(visibleItems);
+      break;
   }
 
   const flags = deriveFlags(currentState, {
@@ -89,4 +73,35 @@ export function render(currentState, uiState = {}) {
   preview.textContent = formatItems(visibleItems);
   totalCount.textContent = stats.total;
   visibleCount.textContent = stats.visible;
+
+  function renderLoading() {
+    itemsList.innerHTML = `<li class="empty">Загрузка...</li>`;
+  }
+
+  function renderError(errorText) {
+    itemsList.innerHTML = `<li class="empty">Ошибка: ${errorText}</li>`;
+  }
+
+  function renderEmptyAll() {
+    itemsList.innerHTML = `<li class="empty">Список пуст</li>`;
+  }
+
+  function renderEmptyFiltered() {
+    itemsList.innerHTML = `<li class="empty">Ничего не найдено</li>`;
+  }
+
+  function renderList(items) {
+    const html = items
+      .map(
+        (item) => `
+      <li data-id="${item.id}">
+        <span>${item.text}</span>
+        <button data-role="delete">Delete</button>
+      </li>
+    `,
+      )
+      .join("");
+
+    itemsList.innerHTML = html;
+  }
 }

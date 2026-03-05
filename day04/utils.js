@@ -45,3 +45,23 @@ export function deriveFlags(state, { inputValue, error }) {
     canAddItem,
   };
 }
+
+export function getListMode(state, visibleItems) {
+  if (state.requestStatus === "loading") {
+    return "loading";
+  }
+
+  if (state.requestStatus === "error") {
+    return "error";
+  }
+
+  if (state.items.length === 0) {
+    return "emptyAll";
+  }
+
+  if (visibleItems.length === 0) {
+    return "emptyFiltered";
+  }
+
+  return "normal";
+}

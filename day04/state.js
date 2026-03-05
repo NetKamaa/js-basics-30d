@@ -3,6 +3,9 @@ import { normalizeText } from "./utils.js";
 let state = {
   items: [],
   filter: "",
+
+  requestStatus: "idle",
+  requestError: "",
 };
 
 const DEFAULT_STATE = {
