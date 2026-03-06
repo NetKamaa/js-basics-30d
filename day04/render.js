@@ -18,8 +18,6 @@ export const errorBlock = document.createElement("p");
 errorBlock.style.color = "red";
 itemInput.parentNode.insertBefore(errorBlock, itemInput.nextSibling);
 
-let lastListHTML = "";
-
 function renderEmptyState(type) {
   if (type === "empty") {
     return `<li class="empty">Список пуст</li>`;
