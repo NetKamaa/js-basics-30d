@@ -150,6 +150,8 @@ Planned features:
 
 A link to this repository will be added once the project is completed.
 
+https://github.com/NetKamaa/Catalog-FakeStore . 13.03.2026
+
 ---
 
 ## Notes Pro
